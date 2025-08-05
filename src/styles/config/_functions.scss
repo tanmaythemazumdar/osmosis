@@ -1,0 +1,132 @@
+@use 'sass:map';
+@use 'sass:math';
+
+@use '../core/colors';
+
+// Get a value from a nested map
+@function map-deep-get($map, $keys...) {
+  @each $key in $keys {
+    $map: map.get($map, $key);
+  }
+  @return $map;
+}
+
+// Breakpoint functions
+@function breakpoint-infix($name, $breakpoints: $breakpoints) {
+  @return if(map.get($breakpoints, $name) == 0, '', '-#{$name}');
+}
+
+@function breakpoint-min($name, $breakpoints: $breakpoints) {
+  $min: map.get($breakpoints, $name);
+  @return if($min != 0, $min, null);
+}
+
+// Unit conversion functions
+@function strip-unit($number) {
+  @if type-of($number) == 'number' and not unitless($number) {
+    @return $number / ($number * 0 + 1);
+  }
+  @return $number;
+}
+
+@function to-rem($value, $base-value: 16px) {
+  $value: strip-unit($value) / strip-unit($base-value) * 1rem;
+  @return $value;
+}
+
+@function to-em($value, $base-value: 16px) {
+  $value: strip-unit($value) / strip-unit($base-value) * 1em;
+  @return $value;
+}
+
+// String functions
+@function str-replace($string, $search, $replace: '') {
+  $index: str-index($string, $search);
+
+  @if $index {
+    @return str-slice($string, 1, $index - 1) + $replace +
+      str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
+  }
+
+  @return $string;
+}
+
+// Z-index function
+@function z-index($key) {
+  @if variable-exists(z-index-#{$key}) {
+    @return var(--z-index-#{$key});
+  }
+
+  @error 'Z-index `#{$key}` not found.';
+}
+
+// Math calculation functions
+@function aspect-ratio($width, $height) {
+  @return percentage($height / $width);
+}
+
+// List functions
+@function is-in-list($list, $value) {
+  @return not not index($list, $value);
+}
+
+@function append-if-not-exists($list, $value) {
+  @if not is-in-list($list, $value) {
+    @return append($list, $value);
+  }
+  @return $list;
+}
+
+// Utility function to get a specific color
+@function color($color-name, $shade) {
+  @if not map.has-key(colors.$colors, $color-name) {
+    @error 'Color '#{$color-name}' not found in $colors map.';
+  }
+
+  $color-map: map.get(colors.$colors, $color-name);
+
+  @if not map.has-key($color-map, $shade) {
+    @error 'Shade '#{$shade}' not found in '#{$color-name}' color map.';
+  }
+
+  @return map.get($color-map, $shade);
+}
+
+// Spacing function
+@function getSpacingValue($value) {
+  $result: math.div($value, 16);
+  @return $result * 1rem;
+}
+
+// fluid function for text clamp
+$default-min-bp: 20rem; /* xs =  320px */
+$default-max-bp: 80rem; /* xl = 1280px */
+
+@function round($number, $decimals: 0) {
+  $n: 1;
+
+  @if $decimals > 0 {
+    @for $i from 1 through $decimals {
+      $n: $n * 10;
+    }
+  }
+
+  @return math.div(math.round($number * $n), $n);
+}
+
+@function px-to-rem($px) {
+  $rems: math.div($px, 16px) * 1rem;
+
+  @return $rems;
+}
+
+@function fluid($min-size, $max-size, $min-breakpoint: $default-min-bp, $max-breakpoint: $default-max-bp, $unit: vw) {
+  $slope: math.div($max-size - $min-size, $max-breakpoint - $min-breakpoint);
+  $slope-to-unit: $slope * 100;
+  $intercept: $min-size - $slope * $min-breakpoint;
+  $intercept-rem: round(px-to-rem($min-size - $slope * $min-breakpoint), 2);
+  $min-size-rem: round(px-to-rem($min-size), 2);
+  $max-size-rem: round(px-to-rem($max-size), 2);
+
+  @return clamp(#{$min-size}, #{$slope-to-unit}#{$unit} + #{$intercept}, #{$max-size});
+}

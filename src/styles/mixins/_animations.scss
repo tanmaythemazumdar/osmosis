@@ -1,0 +1,19 @@
+/*
+ * Animation Mixins
+ * Provides mixins for animations and transitions
+ */
+
+@use '../config/variables';
+@use '../config/mixins';
+
+// Basic transition
+@mixin transition($property: all, $duration: 0.2s, $timing: ease-in-out, $delay: 0s) {
+  transition-property: $property;
+  transition-duration: $duration;
+  transition-timing-function: $timing;
+  transition-delay: $delay;
+
+  @include media-reduced-motion {
+    transition: none;
+  }
+}
