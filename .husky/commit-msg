@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+.husky/validate-commit.sh "$1"

@@ -1,0 +1,28 @@
+{
+  "css.validate": false,
+  "diffEditor.ignoreTrimWhitespace": false,
+  "editor.codeActionsOnSave": ["source.addMissingImports", "source.fixAll", "source.organizeImports"],
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.indentSize": "tabSize",
+  "editor.minimap.enabled": false,
+  "editor.tabSize": 2,
+  "eslint.enable": true,
+  "files.exclude": {
+    "**/coverage": true
+  },
+  "files.watcherExclude": {
+    "**/dist": true
+  },
+  "git.enableCommitSigning": true,
+  "javascript.format.enable": true,
+  "prettier.configPath": "prettier.config.js",
+  "search.exclude": {
+    "**/.yarn": true,
+    "**/.pnp.*": true
+  },
+  "typescript.disableAutomaticTypeAcquisition": true,
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.preferences.quoteStyle": "single"
+}
